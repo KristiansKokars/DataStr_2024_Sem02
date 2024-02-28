@@ -79,14 +79,7 @@ public class Student implements Comparable<Student> {
 
     @Override
     public int compareTo(Student other) {
-        if (this == null) {
-            return -1;
-        }
-
-        if (other == null) {
-            return 1;
-        }
-
+        if (other == null) return 1;
 
         return Double.compare(this.averageGrade(), other.averageGrade());
     }
