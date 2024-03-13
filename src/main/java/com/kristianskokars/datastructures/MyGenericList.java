@@ -1,11 +1,9 @@
 package com.kristianskokars.datastructures;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Objects;
 
 
-public class MyGenericList<T> {
+public class MyGenericList<T extends Comparable<T>> {
     private final int LIST_DEFAULT_SIZE = 10;
     private final Class<T> clazz;
     private T[] array;
@@ -96,13 +94,18 @@ public class MyGenericList<T> {
         return null;
     }
 
-    // Note: this does not sort in place
     public void sort() {
-        array = Arrays
-                .stream(array)
-                .filter(Objects::nonNull)
-                .sorted()
-                .toArray((unusedSize) -> createNewArray(size)); // filtering out nulls changes the size of the array, so we put it back
+        int low = 0;
+        int high = array.length - 1;
+
+        quickSort(array, low, high);
+
+        // Alternative implementation, does not sort in place though
+//        array = Arrays
+//                .stream(array)
+//                .filter(Objects::nonNull)
+//                .sorted()
+//                .toArray((unusedSize) -> createNewArray(size)); // filtering out nulls changes the size of the array, so we put it back
     }
 
     public void print() {
@@ -116,6 +119,36 @@ public class MyGenericList<T> {
 
     public void empty() {
         array = createNewArray(size);
+    }
+
+    private void quickSort(T[] array, int low, int high) {
+        if (low < high) {
+            int partitionIndex = partition(array, low, high);
+
+            quickSort(array, low, partitionIndex - 1);
+            quickSort(array, partitionIndex + 1, high);
+        }
+    }
+
+    private int partition(T[] array, int low, int high) {
+        T pivot = array[high];
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+            if (array[j] != null && array[j].compareTo(pivot) < 0) {
+                i++;
+                swap(array, i, j);
+            }
+        }
+        swap(array, i + 1, high);
+
+        return i + 1;
+    }
+
+    private void swap(T[] array, int i, int j) {
+        T temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
 
     private boolean isInvalidIndex(int index) {
